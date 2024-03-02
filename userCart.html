@@ -10,7 +10,7 @@
     <nav>
         <h1 id="userName"></h1>
         <div>
-            <a href="userHomePage.html" class="backButton">BACK TO HOME</a>
+            <a href="index.html" class="backButton">BACK TO HOME</a>
             <a href="login.html" class="logoutButton">Logout</a>
         </div>
     </nav>
@@ -19,6 +19,9 @@
     <script>
         const cartContainer = document.getElementById('cartContainer');
         const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+        if(!loggedInUser){
+            window.location.href="index.html";
+        }
         cartContainer.innerHTML = '';
         let cart = JSON.parse(localStorage.getItem('cart')) || {};
         const userCart = cart[loggedInUser.email] || [];

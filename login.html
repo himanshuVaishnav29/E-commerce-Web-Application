@@ -90,7 +90,7 @@
 
         if (user) {
             sessionStorage.setItem('loggedInUser', JSON.stringify(user));
-            window.location.href = userType === 'admin' ? 'adminHomePage.html' : 'userHomePage.html';
+            window.location.href = userType === 'admin' ? 'adminHomePage.html' : 'index.html';
         } else {
             alert('Invalid email, password, or user type. Please try again.');
         }
