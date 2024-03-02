@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/userCart.css">
+    <title>User Cart</title>
+</head>
+<body>  
+    <nav>
+        <h1 id="userName"></h1>
+        <div>
+            <a href="userHomePage.html" class="backButton">BACK TO HOME</a>
+            <a href="login.html" class="logoutButton">Logout</a>
+        </div>
+    </nav>
+    <div id="cartContainer"></div>
+
+    <script>
+        const cartContainer = document.getElementById('cartContainer');
+        const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+        cartContainer.innerHTML = '';
+        let cart = JSON.parse(localStorage.getItem('cart')) || {};
+        const userCart = cart[loggedInUser.email] || [];
+
+
+       
+
+        function incrementQuantity(index) {
+            const inputField = document.getElementById(`quantity-${index}`);
+            let quantity = parseInt(inputField.value);
+            quantity++;
+            inputField.value = quantity;
+            userCart[index].quantity = quantity;
+            saveToStorage();
+            displayCartItems();
+         
+        }
+
+        function decrementQuantity(index) {
+            const inputField = document.getElementById(`quantity-${index}`);
+            let quantity = parseInt(inputField.value);
+            if (quantity > 1) {
+                quantity--;
+                inputField.value = quantity;
+                userCart[index].quantity = quantity;
+                saveToStorage();
+                displayCartItems();
+            }
+        }
+
+        function removeFromCart(index) {
+            const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+            let cart = JSON.parse(localStorage.getItem('cart')) || {};
+            const userCart = cart[loggedInUser.email] || [];
+            userCart.splice(index, 1);
+            cart[loggedInUser.email] = userCart;
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert("Item removed from cart successfully");
+            displayCartItems(); 
+        }
+        function openPaymentPage(){
+            window.location.href="paymentPage.html";
+        }
+        function displayCartItems() {
+            const cartContainer = document.getElementById('cartContainer');
+            const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+            cartContainer.innerHTML = '';
+            let cart = JSON.parse(localStorage.getItem('cart')) || {};
+            const userCart = cart[loggedInUser.email] || [];
+            if (userCart.length === 0) {
+                cartContainer.innerHTML = '<center><h1>Your cart is empty );</h1><img src="./images/emptyCart.png" height="350px"></center>';
+            } else {
+                const table = document.createElement('table');
+                table.innerHTML = `
+                    <tr>
+                        <th>Serial No.</th>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                        <th>Action</th>
+                    </tr>
+                `;
+                let total = 0;
+                let count = 0;
+                userCart.forEach((product, index) => {
+                    const cartItem = document.createElement('tr');
+                    total += parseFloat(product.price) * product.quantity;
+                    count++;
+                    cartItem.innerHTML = `
+                        <td>${count}</td>
+                        <td>
+                            <img src="${product.productImage}" width="70px" height="70px">
+                            ${product.name}
+                        </td>
+                        <td>Rs.${product.price}</td>
+                        <td>
+                            <button class="quantity-btn" onclick="decrementQuantity(${index})">-</button>
+                            <input type="text" class="quantity-input" value="${product.quantity}" id="quantity-${index}">
+                            <button class="quantity-btn" onclick="incrementQuantity(${index})">+</button>
+                        </td>
+                        <td>Rs.${product.price*product.quantity}</td>
+
+                        <td>
+                            <button class="remove-btn" onclick="removeFromCart(${index})">Remove</button>
+                        </td>
+                    `;
+                    table.appendChild(cartItem);
+                });
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>FINAL TOTAL:</td>
+                    <td>Rs.${total.toFixed(2)}</td>
+                    <td>
+                        <button onclick=openPaymentPage()>PROCEED TO PAY</button>
+                    </td>   
+                `;
+                table.appendChild(row);
+                cartContainer.appendChild(table);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+            if (loggedInUser) {
+                const capitalizedUsername = loggedInUser.fullName.toUpperCase();
+                document.getElementById('userName').innerText = `Welcome, ${capitalizedUsername}`;
+            } else {
+                window.location.href = 'login.html';
+            }
+            displayCartItems();
+        });
+
+        function saveToStorage(){
+            cart[loggedInUser.email] = userCart;
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+    </script>
+</body>
+</html>

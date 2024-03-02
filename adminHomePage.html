@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/adminHomePage.css">
+    <script src="./javascript/adminHomePage.js"></script>
+    <title>ADMIN HOME</title>
+</head>
+<body>
+    <nav style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
+        <h1 id="userName"></h1>
+        <div>
+            <a href="login.html"  class="logoutButton">Logout</a>
+            &nbsp;
+        </div>
+    </nav>
+    
+    <h1 style="color: rgb(20, 37, 220);" class="netflix-font"><center>PRODUCT LIST</center></h1>
+    <br>
+        <form style="text-align: center;">
+            <input type="text" placeholder="Enter product name" class="input-container " id="productName">
+            <input type="textarea" placeholder="Enter Product description" class="input-container" id="productDescription">
+            <input type="number" placeholder="Enter Price" class="input-container" id="productPrice">
+            <input type="number" placeholder="Enter Quantity" class="input-container" id="productQuantity"> 
+            <input type="text" placeholder="Enter Image URL" id="productImage">
+            <br><br>
+            <button type="button" onclick="addProduct()">ADD</button>
+        </form>
+        <br><br>
+        <table id="productTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>S No.</th>
+                    <th>PRODUCT NAME</th>
+                    <th>DESCRIPTION</th>
+                    <th>PRICE (INR)</th>
+                    <th>Quantity</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody id="productTableBody"></tbody>
+        </table>
+        
+         <div id="updateFormContainer"></div>
+
+
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const loggedInUser = sessionStorage.getItem('loggedInUser');
+
+                if (loggedInUser) {
+                    const user = JSON.parse(loggedInUser);
+                    const capitalizedUsername = user.fullName.toUpperCase();
+                    document.getElementById('userName').innerText = `Welcome, ${capitalizedUsername}`;
+                } else {
+                    window.location.href = 'userHomePage.html';
+                }
+                
+            });
+        </script>
+</body>
+
+
+</html>

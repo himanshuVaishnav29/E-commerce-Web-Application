@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        /* background-image: url('https://i.stack.imgur.com/kx8MT.gif'); */
+        background-size: cover;
+        height: 100vh;
+    }
+    form {
+        /* background-color: #577757; */
+        background-color: rgba(255, 255, 255, 0.8); 
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        width: 300px;
+        text-align: center;
+    }
+
+    input[type="email"],
+    input[type="password"],
+    button {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        box-sizing: border-box;
+    }
+
+    button {
+        background-color: #161617;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #579958;
+        color: #161617;
+    }
+
+    .signup-link {
+        display: block;
+        text-decoration: none;
+        color: #141212;
+        margin-top: 10px;
+    }
+    a:hover{
+        color: #2f48a1;
+    }
+</style>
+</head>
+<body>
+<form id="loginForm">
+    <h2>Login</h2>
+    <select id="userType">
+        <option>Choose Role</option>
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+    </select><br><br>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <a href="signUp.html" class="signup-link">New user? Register here</a><br>
+    <button type="submit">Login</button>
+</form>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault(); 
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const userType = document.getElementById('userType').value;
+
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+
+        const user = users.find(user => user.email === email && user.password === password && user.userType === userType);
+
+        if (user) {
+            sessionStorage.setItem('loggedInUser', JSON.stringify(user));
+            window.location.href = userType === 'admin' ? 'adminHomePage.html' : 'userHomePage.html';
+        } else {
+            alert('Invalid email, password, or user type. Please try again.');
+        }
+
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+    });
+</script>
+</body>
+</html>

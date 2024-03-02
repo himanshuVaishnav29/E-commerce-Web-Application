@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+        .signup-link {
+        display: block;
+        text-decoration: none;
+        color: #949494;
+        margin-top: 10px;
+    }
+   
+    video {
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    form {
+        background-color: rgba(255, 255, 255, 0.8); 
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        width: 300px;
+        z-index: 1; 
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    button {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+    }
+
+    button {
+        background-color: #161617;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #579958;
+    }
+    a{
+        text-decoration: none;
+    }
+</style>
+</head>
+<body>
+
+<form id="signupForm">
+    <h2>SIGN UP </h2>
+    <select id="userType">
+        <option>Choose Role</option>
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+    </select><br><br>
+    <input type="text" id="fullName" placeholder="Full Name" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <a href="login.html">Already a user ? click here</a><br><br>
+    <button type="submit">Sign Up</button>
+</form>
+
+<script>
+   
+    document.getElementById('signupForm').addEventListener('submit', function(event) {
+        event.preventDefault(); 
+
+        const userType = document.getElementById('userType').value;
+        const fullName = document.getElementById('fullName').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        
+        const user = {
+            fullName: fullName,
+            email: email,
+            password: password,
+            userType:userType
+        };
+
+       
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+
+        
+        users.push(user);
+
+        
+        localStorage.setItem('users', JSON.stringify(users));
+
+       
+        document.getElementById('fullName').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('userType').value = '';
+       
+        alert('Sign up successful!');
+        window.location.href = 'login.html';
+    });
+</script>
+</body>
+</html>

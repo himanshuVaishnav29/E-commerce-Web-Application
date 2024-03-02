@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/userHomePage.css">
+    <title>HOME</title>
+    <style>
+        .product-card {
+            height:fit-content;
+            background-color: rgb(165, 166, 168);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            background-color: rgb(165, 166, 168);
+            margin-bottom: 10px; /* Optional: Add spacing between product cards */
+            transition: transform 0.3s ease-in-out, box-shadow 0.5s ease-in-out; /* Add smooth transition for transform and box-shadow */
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Add initial box-shadow */
+        }
+        .product-card:hover {
+            transform: translateY(-5px) scale(1.05); /* Add translation effect on hover */
+            box-shadow: 15px 15px 15pxrgba(107, 62, 95, 0.3); /* Change box-shadow on hover */
+        }
+        .product-card img {
+            width: 200px;
+            height: 250px;
+            margin-bottom: 10px; /* Optional: Add spacing between image and text */
+        }
+
+        .product-card button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .product-card button:hover {
+            background-color: #3b0c38;
+            color: rgb(242, 242, 242);
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            box-shadow: 15px 15px 15px rgba(87, 16, 81, 0.3);
+        }
+    </style>
+</head>
+<body>  
+    <nav style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
+        <h1 id="userName"></h1>
+        <div>
+            <a  onclick="viewCart()" class="viewCartButton">VIEW CART </a>&nbsp; &nbsp;
+            <!-- <a href="login.html" class="logoutButton">Logout</a> -->
+            <a id="loginButton" href="login.html" class="logoutButton">LOGIN/REGISTER</a> 
+            <a id="logoutButton" style="display: none;" href="#" class="logoutButton" onclick="logout()">LOGOUT</a> 
+        </div>
+    </nav>
+    <div id="productContainer"></div>
+    <center><button id="showMoreButton"  onclick="showMoreProducts()">Show More</button> </center>
+    
+    <br>
+    <footer>
+        <div class="footer-content">
+            <center><p>&copy; 2024 All rights reserved.</p></center>
+        </div>
+    </footer>
+
+
+    <script src="./javascript/adminHomePage.js"></script>
+    <script>
+        const showMoreButton = document.getElementById('showMoreButton');
+        const productsPerPage = 6;
+        let currentDisplayCount = productsPerPage;
+        function addToCart(index) {
+                const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+                if (!loggedInUser) {
+                    alert('Please log in to add items to your cart.');
+                    return;
+                }
+                const cart = JSON.parse(localStorage.getItem('cart')) || {};
+                const userCart = cart[loggedInUser.email] || [];
+                const existingProductIndex = userCart.findIndex(item => item.name === products[index].name);
+                    if (existingProductIndex !== -1) {
+                        if (products[index].quantity < userCart[existingProductIndex].quantity + 1) {
+                                alert('Sorry, the selected quantity exceeds the available stock.');
+                                return;
+                         }
+                        userCart[existingProductIndex].quantity++;
+                    } else {
+                        if (products[index].quantity < 1) {
+                            alert('Sorry, this product is out of stock.');
+                            return;
+                        }
+                        var cartProduct = {
+                            name: products[index].name,
+                            description: products[index].description,
+                            price: products[index].price,
+                            productImage: products[index].image,
+                            quantity: 1
+                        };
+                        userCart.push(cartProduct);
+                    }
+                    cart[loggedInUser.email] = userCart;
+                    console.log(cart)
+                    localStorage.setItem('cart',JSON.stringify(cart));
+                    alert('Product added to cart!');
+        }
+        function logout(){
+            sessionStorage.clear();
+            window.location.href = 'userHomePage.html'; 
+        }
+        function viewCart(){
+            const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'));
+            if(!loggedInUser){
+                alert("Plz Login to view your cart");
+            }else{
+                window.location.href="userCart.html";
+            }
+        }
+      
+            function showMoreProducts() {
+                const storedProducts = JSON.parse(localStorage.getItem('products'));
+                const productContainer = document.getElementById('productContainer');
+                const startIndex = currentDisplayCount;
+                const endIndex = Math.min(startIndex + productsPerPage, storedProducts.length);
+            
+                for (let i = startIndex; i < endIndex; i++) {
+                    const product = storedProducts[i];
+                    const card = document.createElement('div');
+                    card.classList.add('product-card');
+                    card.innerHTML = `
+                        <img src="${product.image}" alt="${product.name}" width="200px" height="100px">
+                        <h3>${product.name}</h3>
+                        <p>${product.description}</p>
+                        <p>Price: Rs.${product.price}</p>
+                        <p>${product.quantity} left</p>
+                        <button onclick="addToCart(${i})">ADD TO CART</button>
+                    `;
+                    productContainer.appendChild(card);
+                }
+            
+                currentDisplayCount += productsPerPage;
+                
+                if (currentDisplayCount >= storedProducts.length) {
+                    document.getElementById('showMoreButton').style.display = 'none'; // Hide the button when all products are displayed
+                }
+            }
+
+        
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const loggedInUser = sessionStorage.getItem('loggedInUser');
+            if (loggedInUser) {
+                const user = JSON.parse(loggedInUser);
+                const capitalizedUsername = user.fullName.toUpperCase();
+                document.getElementById('userName').innerText = `Welcome, ${capitalizedUsername}`;
+                document.getElementById('logoutButton').style.display = 'inline-block'; 
+                document.getElementById('loginButton').style.display = 'none'; 
+            } else {
+                document.getElementById('userName').innerText = `HEY THERE !`;
+                document.getElementById('logoutButton').style.display = 'none'; 
+                document.getElementById('loginButton').style.display = 'inline-block'; 
+            }
+
+            const productContainer = document.getElementById('productContainer');
+            const storedProducts = JSON.parse(localStorage.getItem('products'));
+            function displayInitialProducts() {
+                for (let i = 0; i < productsPerPage && i < storedProducts.length; i++) {
+                    const product = storedProducts[i];
+                    const card = document.createElement('div');
+                    card.classList.add('product-card');
+                    card.innerHTML = `
+                        <img src="${product.image}" alt="${product.name}" width="200px" height="200px">
+                        <h3>${product.name}</h3>
+                        <p>${product.description}</p>
+                        <p>Price: Rs.${product.price}</p>
+                        <p>${product.quantity} left</p>
+                        <button onclick="addToCart(${i})">ADD TO CART</button>
+                    `;
+                    productContainer.appendChild(card);
+                }
+            }
+
+            displayInitialProducts();
+        });
+    </script>
+</body>
+</html>
